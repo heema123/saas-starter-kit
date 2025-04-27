@@ -4,14 +4,14 @@ import { sendVerificationEmail } from '@/lib/email/sendVerificationEmail';
 import { isEmailAllowed } from '@/lib/email/utils';
 import env from '@/lib/env';
 import { ApiError } from '@/lib/errors';
-import { createTeam, getTeam, isTeamExists } from 'models/team';
+import { createOrganization, getOrganization, isOrganizationExists } from 'models/organization';
 import { createUser, getUser } from 'models/user';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { recordMetric } from '@/lib/metrics';
 import { getInvitation, isInvitationExpired } from 'models/invitation';
 import { validateRecaptcha } from '@/lib/recaptcha';
 import { slackNotify } from '@/lib/slack';
-import { Team } from '@prisma/client';
+import { Organization } from '@prisma/client';
 import { createVerificationToken } from 'models/verificationToken';
 import { userJoinSchema, validateWithSchema } from '@/lib/zod';
 
@@ -45,7 +45,7 @@ export default async function handler(
 
 // Signup the user
 const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { name, password, team, inviteToken, recaptchaToken } = req.body;
+  const { name, password, organization, inviteToken, recaptchaToken } = req.body;
 
   await validateRecaptcha(recaptchaToken);
 
@@ -83,20 +83,18 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
     throw new ApiError(400, 'An user with this email already exists.');
   }
 
-  // Check if team name is available
+  // Check if organization name is available
   if (!invitation) {
-    if (!team) {
-      throw new ApiError(400, 'A team name is required.');
+    if (!organization) {
+      throw new ApiError(400, 'An organization name is required.');
     }
 
-    const slug = slugify(team);
+    const slug = slugify(organization);
 
-    validateWithSchema(userJoinSchema, { team, slug });
+    validateWithSchema(userJoinSchema, { organization, slug });
 
-    const slugCollisions = await isTeamExists(slug);
-
-    if (slugCollisions > 0) {
-      throw new ApiError(400, 'A team with this slug already exists.');
+    if (await isOrganizationExists(slug)) {
+      throw new ApiError(400, 'An organization with this slug already exists.');
     }
   }
 
@@ -107,18 +105,18 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
     emailVerified: invitation ? new Date() : null,
   });
 
-  let userTeam: Team | null = null;
+  let userOrganization: Organization | null = null;
 
-  // Create team if user is not invited
-  // So we can create the team with the user as the owner
+  // Create organization if user is not invited
+  // So we can create the organization with the user as the owner
   if (!invitation) {
-    userTeam = await createTeam({
+    userOrganization = await createOrganization({
       userId: user.id,
-      name: team,
-      slug: slugify(team),
+      name: organization,
+      slug: slugify(organization),
     });
   } else {
-    userTeam = await getTeam({ slug: invitation.team.slug });
+    userOrganization = await getOrganization({ slug: invitation.team.slug });
   }
 
   // Send account verification email
@@ -140,7 +138,7 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
     fields: {
       Name: user.name,
       Email: user.email,
-      Team: userTeam?.name,
+      Organization: userOrganization?.name,
     },
   });
 

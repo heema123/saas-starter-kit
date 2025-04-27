@@ -26,7 +26,7 @@ const JoinUserSchema = Yup.object().shape({
     .required()
     .min(passwordPolicies.minLength)
     .max(maxLengthPolicies.password),
-  team: Yup.string().required().min(3).max(maxLengthPolicies.team),
+  organization: Yup.string().required().min(3).max(maxLengthPolicies.team),
 });
 
 const Join = ({ recaptchaSiteKey }: JoinProps) => {
@@ -45,7 +45,7 @@ const Join = ({ recaptchaSiteKey }: JoinProps) => {
       name: '',
       email: '',
       password: '',
-      team: '',
+      organization: '',
     },
     validationSchema: JoinUserSchema,
     validateOnChange: false,
@@ -96,11 +96,11 @@ const Join = ({ recaptchaSiteKey }: JoinProps) => {
         />
         <InputWithLabel
           type="text"
-          label={t('team')}
-          name="team"
-          placeholder={t('team-name')}
-          value={formik.values.team}
-          error={formik.errors.team}
+          label={t('organization')}
+          name="organization"
+          placeholder={t('organization-name')}
+          value={formik.values.organization}
+          error={formik.errors.organization}
           onChange={formik.handleChange}
         />
         <InputWithLabel
