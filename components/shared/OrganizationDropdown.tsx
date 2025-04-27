@@ -5,7 +5,7 @@ import {
   RectangleStackIcon,
   UserCircleIcon,
 } from '@heroicons/react/24/outline';
-import useTeams from 'hooks/useTeams';
+import useOrganizations from 'hooks/useOrganizations';
 import { useSession } from 'next-auth/react';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
@@ -14,16 +14,16 @@ import React, { useState, useRef, useEffect } from 'react';
 import { maxLengthPolicies } from '@/lib/common';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const TeamDropdown = () => {
+const OrganizationDropdown = () => {
   const router = useRouter();
-  const { teams } = useTeams();
+  const { organizations } = useOrganizations();
   const { data } = useSession();
   const { t } = useTranslation('common');
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const currentTeam = (teams || []).find(
-    (team) => team.slug === router.query.slug
+  const currentOrganization = (organizations || []).find(
+    (organization) => organization.slug === router.query.slug
   );
 
   // Close dropdown when clicking outside
@@ -43,13 +43,13 @@ const TeamDropdown = () => {
   const menus = [
     {
       id: 2,
-      name: t('teams'),
-      items: (teams || []).map((team) => ({
-        id: team.id,
-        name: team.name,
-        href: `/teams/${team.slug}/settings`,
+      name: t('organizations'),
+      items: (organizations || []).map((organization) => ({
+        id: organization.id,
+        name: organization.name,
+        href: `/organizations/${organization.slug}/settings`,
         icon: FolderIcon,
-        active: team.slug === router.query.slug,
+        active: organization.slug === router.query.slug,
       })),
     },
     {
@@ -70,18 +70,18 @@ const TeamDropdown = () => {
       name: '',
       items: [
         {
-          id: 'all-teams',
-          name: t('all-teams'),
-          href: '/teams',
+          id: 'all-organizations',
+          name: t('all-organizations'),
+          href: '/organizations',
           icon: RectangleStackIcon,
-          active: router.pathname === '/teams' && !router.query.newTeam,
+          active: router.pathname === '/organizations' && !router.query.newOrganization,
         },
         {
-          id: 'new-team',
-          name: t('new-team'),
-          href: '/teams?newTeam=true',
+          id: 'new-organization',
+          name: t('new-organization'),
+          href: '/organizations?newOrganization=true',
           icon: FolderPlusIcon,
-          active: router.pathname === '/teams' && router.query.newTeam === 'true',
+          active: router.pathname === '/organizations' && router.query.newOrganization === 'true',
         },
       ],
     },
@@ -98,13 +98,13 @@ const TeamDropdown = () => {
         <div className="flex items-center gap-2 truncate">
           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
             <span className="text-xs font-semibold text-primary">
-              {currentTeam 
-                ? currentTeam.name.charAt(0)
+              {currentOrganization 
+                ? currentOrganization.name.charAt(0)
                 : data?.user?.name?.charAt(0) || 'U'}
             </span>
           </span>
           <span className="truncate text-sm font-medium">
-            {currentTeam?.name ||
+            {currentOrganization?.name ||
               data?.user?.name?.substring(
                 0,
                 maxLengthPolicies.nameShortDisplay
@@ -161,4 +161,4 @@ const TeamDropdown = () => {
   );
 };
 
-export default TeamDropdown;
+export default OrganizationDropdown; 

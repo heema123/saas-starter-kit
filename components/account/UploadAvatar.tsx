@@ -86,14 +86,11 @@ const UploadAvatar = ({ user }: { user: Partial<User> }) => {
   return (
     <form onSubmit={handleSubmit}>
       <Card>
-        <Card.Body>
-          <Card.Header>
-            <Card.Title>{t('avatar')}</Card.Title>
-            <Card.Description>
-              {t('custom-avatar')} <br />
-              {t('avatar-type')}
-            </Card.Description>
-          </Card.Header>
+        <Card.Header>
+          <Card.Title>{t('avatar')}</Card.Title>
+          <Card.Description>{`${t('custom-avatar')} \n${t('avatar-type')}`}</Card.Description>
+        </Card.Header>
+        <Card.Content>
           <div>
             <label
               htmlFor="image"
@@ -155,12 +152,12 @@ const UploadAvatar = ({ user }: { user: Partial<User> }) => {
               />
             </div>
           </div>
-        </Card.Body>
+        </Card.Content>
         <Card.Footer>
           <Button
             type="submit"
-            color="primary"
-            size="md"
+            variant="default"
+            size="default"
             disabled={!image || image === user.image}
             loading={loading}
           >

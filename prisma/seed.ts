@@ -5,7 +5,7 @@ const { hash } = require('bcryptjs');
 const { randomUUID } = require('crypto');
 
 let USER_COUNT = 10;
-const TEAM_COUNT = 5;
+const ORGANIZATION_COUNT = 5;
 const ADMIN_EMAIL = 'admin@example.com';
 const ADMIN_PASSWORD = 'admin@123';
 const USER_EMAIL = 'user@example.com';
@@ -55,20 +55,20 @@ async function seedUsers() {
   }
 }
 
-async function seedTeams() {
-  const newTeams: any[] = [];
+async function seedOrganizations() {
+  const newOrganizations: any[] = [];
 
   await Promise.all(
-    Array(TEAM_COUNT)
+    Array(ORGANIZATION_COUNT)
       .fill(0)
-      .map(() => createRandomTeam())
+      .map(() => createRandomOrganization())
   );
-  console.log('Seeded teams', newTeams.length);
-  return newTeams;
+  console.log('Seeded organizations', newOrganizations.length);
+  return newOrganizations;
 
-  async function createRandomTeam() {
+  async function createRandomOrganization() {
     const name = faker.company.name();
-    const team = await client.team.create({
+    const organization = await client.organization.create({
       data: {
         name,
         slug: name
@@ -81,31 +81,31 @@ async function seedTeams() {
           .replace(/-+$/, ''),
       },
     });
-    newTeams.push(team);
+    newOrganizations.push(organization);
   }
 }
 
-async function seedTeamMembers(users: any[], teams: any[]) {
-  const newTeamMembers: any[] = [];
+async function seedOrganizationMembers(users: any[], organizations: any[]) {
+  const newOrganizationMembers: any[] = [];
   const roles = ['OWNER', 'MEMBER'];
   for (const user of users) {
-    const count = Math.floor(Math.random() * (TEAM_COUNT - 1)) + 2;
-    const teamUsed = new Set();
+    const count = Math.floor(Math.random() * (ORGANIZATION_COUNT - 1)) + 2;
+    const organizationsUsed = new Set();
     for (let j = 0; j < count; j++) {
       try {
-        let teamId;
+        let organizationId;
         do {
-          teamId = teams[Math.floor(Math.random() * TEAM_COUNT)].id;
-        } while (teamUsed.has(teamId));
-        teamUsed.add(teamId);
-        newTeamMembers.push({
+          organizationId = organizations[Math.floor(Math.random() * ORGANIZATION_COUNT)].id;
+        } while (organizationsUsed.has(organizationId));
+        organizationsUsed.add(organizationId);
+        newOrganizationMembers.push({
           role:
             user.email === ADMIN_EMAIL
               ? 'OWNER'
               : user.email === USER_EMAIL
                 ? 'MEMBER'
                 : roles[Math.floor(Math.random() * 2)],
-          teamId,
+          organizationId,
           userId: user.id,
         });
       } catch (ex) {
@@ -114,21 +114,21 @@ async function seedTeamMembers(users: any[], teams: any[]) {
     }
   }
 
-  await client.teamMember.createMany({
-    data: newTeamMembers,
+  await client.organizationMember.createMany({
+    data: newOrganizationMembers,
   });
-  console.log('Seeded team members', newTeamMembers.length);
+  console.log('Seeded organization members', newOrganizationMembers.length);
 }
 
-async function seedInvitations(teams: any[], users: any[]) {
+async function seedInvitations(organizations: any[], users: any[]) {
   const newInvitations: any[] = [];
-  for (const team of teams) {
+  for (const organization of organizations) {
     const count = Math.floor(Math.random() * users.length) + 2;
     for (let j = 0; j < count; j++) {
       try {
         const invitation = await client.invitation.create({
           data: {
-            teamId: team.id,
+            organizationId: organization.id,
             invitedBy: users[Math.floor(Math.random() * users.length)].id,
             email: faker.internet.email(),
             role: 'MEMBER',
@@ -152,9 +152,9 @@ async function seedInvitations(teams: any[], users: any[]) {
 
 async function init() {
   const users = await seedUsers();
-  const teams = await seedTeams();
-  await seedTeamMembers(users, teams);
-  await seedInvitations(teams, users);
+  const organizations = await seedOrganizations();
+  await seedOrganizationMembers(users, organizations);
+  await seedInvitations(organizations, users);
 }
 
 init();

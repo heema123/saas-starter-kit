@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { slugify } from '../server-common';
 import {
   teamName,
+  organizationName,
   apiKeyId,
   slug,
   domain,
@@ -27,6 +28,14 @@ import {
   eventTypes,
 } from './primitives';
 
+import {
+  createTeamInvitationSchema,
+  createOrganizationInvitationSchema,
+  invitationTokenSchema,
+  validateInvitationSchema,
+  acceptInvitationSchema as acceptInviteSchema
+} from './invitation';
+
 export const createApiKeySchema = z.object({
   name: name(50),
 });
@@ -39,14 +48,28 @@ export const teamSlugSchema = z.object({
   slug,
 });
 
+export const organizationSlugSchema = z.object({
+  slug,
+});
+
 export const updateTeamSchema = z.object({
   name: teamName,
   slug: slug.transform((slug) => slugify(slug)),
   domain,
 });
 
+export const updateOrganizationSchema = z.object({
+  name: organizationName,
+  slug: slug.transform((slug) => slugify(slug)),
+  domain,
+});
+
 export const createTeamSchema = z.object({
   name: teamName,
+});
+
+export const createOrganizationSchema = z.object({
+  name: organizationName,
 });
 
 export const updateAccountSchema = z.union([
@@ -69,6 +92,10 @@ export const updatePasswordSchema = z.object({
 export const userJoinSchema = z.union([
   z.object({
     team: teamName,
+    slug,
+  }),
+  z.object({
+    organization: organizationName,
     slug,
   }),
   z.object({
@@ -124,9 +151,13 @@ export const updateMemberSchema = z.object({
   memberId,
 });
 
-export const acceptInvitationSchema = z.object({
-  inviteToken,
-});
+export {
+  createTeamInvitationSchema,
+  createOrganizationInvitationSchema,
+  invitationTokenSchema,
+  validateInvitationSchema,
+  acceptInviteSchema as acceptInvitationSchema,
+};
 
 export const getInvitationSchema = z.object({
   token: inviteToken,

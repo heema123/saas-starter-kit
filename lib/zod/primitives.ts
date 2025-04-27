@@ -38,6 +38,17 @@ export const teamName = z
     `Team name should have at most ${maxLengthPolicies.team} characters`
   );
 
+export const organizationName = z
+  .string({
+    required_error: 'Organization name is required',
+    invalid_type_error: 'Organization name must be a string',
+  })
+  .min(1, 'Organization Name is required')
+  .max(
+    maxLengthPolicies.team, // Reusing team's max length policy for now
+    `Organization name should have at most ${maxLengthPolicies.team} characters`
+  );
+
 export const name = (length: number = maxLengthPolicies.name) =>
   z
     .string({

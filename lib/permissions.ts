@@ -11,7 +11,16 @@ export type Resource =
   | 'team_audit_log'
   | 'team_webhook'
   | 'team_payments'
-  | 'team_api_key';
+  | 'team_api_key'
+  | 'organization'
+  | 'organization_member'
+  | 'organization_invitation'
+  | 'organization_sso'
+  | 'organization_dsync'
+  | 'organization_audit_log'
+  | 'organization_webhook'
+  | 'organization_payments'
+  | 'organization_api_key';
 
 type RolePermissions = {
   [role in RoleType]: Permission[];
@@ -75,6 +84,42 @@ export const permissions: RolePermissions = {
       resource: 'team_api_key',
       actions: '*',
     },
+    {
+      resource: 'organization',
+      actions: '*',
+    },
+    {
+      resource: 'organization_member',
+      actions: '*',
+    },
+    {
+      resource: 'organization_invitation',
+      actions: '*',
+    },
+    {
+      resource: 'organization_sso',
+      actions: '*',
+    },
+    {
+      resource: 'organization_dsync',
+      actions: '*',
+    },
+    {
+      resource: 'organization_audit_log',
+      actions: '*',
+    },
+    {
+      resource: 'organization_payments',
+      actions: '*',
+    },
+    {
+      resource: 'organization_webhook',
+      actions: '*',
+    },
+    {
+      resource: 'organization_api_key',
+      actions: '*',
+    },
   ],
   ADMIN: [
     {
@@ -109,10 +154,46 @@ export const permissions: RolePermissions = {
       resource: 'team_api_key',
       actions: '*',
     },
+    {
+      resource: 'organization',
+      actions: '*',
+    },
+    {
+      resource: 'organization_member',
+      actions: '*',
+    },
+    {
+      resource: 'organization_invitation',
+      actions: '*',
+    },
+    {
+      resource: 'organization_sso',
+      actions: '*',
+    },
+    {
+      resource: 'organization_dsync',
+      actions: '*',
+    },
+    {
+      resource: 'organization_audit_log',
+      actions: '*',
+    },
+    {
+      resource: 'organization_webhook',
+      actions: '*',
+    },
+    {
+      resource: 'organization_api_key',
+      actions: '*',
+    },
   ],
   MEMBER: [
     {
       resource: 'team',
+      actions: ['read', 'leave'],
+    },
+    {
+      resource: 'organization',
       actions: ['read', 'leave'],
     },
   ],

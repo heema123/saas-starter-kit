@@ -1,19 +1,64 @@
-const Loading = () => {
-  return (
-    <div className="flex items-center justify-center">
-      <div role="status">
-        <Spinner />
-        <span className="sr-only">Loading...</span>
-      </div>
+import { motion } from 'framer-motion';
+
+interface LoadingProps {
+  size?: 'sm' | 'md' | 'lg';
+  fullScreen?: boolean;
+  text?: string;
+}
+
+const Loading = ({ size = 'md', fullScreen = false, text = 'Loading...' }: LoadingProps) => {
+  const sizeMap = {
+    sm: 'h-5 w-5',
+    md: 'h-8 w-8',
+    lg: 'h-12 w-12',
+  };
+
+  const content = (
+    <div className="flex flex-col items-center justify-center gap-3">
+      <motion.div
+        initial={{ opacity: 0.5, scale: 0.9 }}
+        animate={{ 
+          opacity: 1, 
+          scale: 1,
+          rotate: [0, 360],
+        }}
+        transition={{ 
+          duration: 1.5, 
+          repeat: Infinity, 
+          ease: "easeInOut" 
+        }}
+      >
+        <Spinner size={sizeMap[size]} />
+      </motion.div>
+      {text && (
+        <motion.p 
+          className="text-sm text-muted-foreground animate-pulse font-medium"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          {text}
+        </motion.p>
+      )}
     </div>
   );
+
+  if (fullScreen) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+        {content}
+      </div>
+    );
+  }
+
+  return <div className="flex items-center justify-center py-6">{content}</div>;
 };
 
-const Spinner = () => {
+const Spinner = ({ size = 'h-10 w-10' }) => {
   return (
     <svg
       aria-hidden="true"
-      className="h-10 w-10 animate-spin fill-primary text-gray-200"
+      className={`${size} animate-spin text-muted fill-primary`}
       viewBox="0 0 100 101"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

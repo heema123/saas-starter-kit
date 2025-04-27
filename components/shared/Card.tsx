@@ -1,64 +1,123 @@
-import { 
-  Card as CardBase, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from '@/lib/components/ui/card';
-import { cn } from '@/lib/lib/utils';
+import React from 'react';
+import { motion, MotionProps } from 'framer-motion';
+import classNames from 'classnames';
 
-interface CardTitleProps {
-  title: string;
-  subtitle?: string;
-  extra?: React.ReactNode;
-}
-
-interface CardProps {
-  title?: string | CardTitleProps;
-  children: React.ReactNode;
-  extra?: React.ReactNode;
-  footer?: React.ReactNode;
+interface CardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, keyof MotionProps>, MotionProps {
+  as?: React.ElementType;
+  withBorder?: boolean;
+  withShadow?: boolean;
+  hoverEffect?: boolean;
   className?: string;
+  children: React.ReactNode;
 }
 
-const Card = (props: CardProps) => {
-  const { title, children, extra, footer, className = '' } = props;
-
-  let cardTitle = '';
-  let subtitle = '';
-  let titleExtra;
-
-  if (typeof title === 'string') {
-    cardTitle = title;
-  } else if (title) {
-    cardTitle = title.title;
-    subtitle = title.subtitle || '';
-    titleExtra = title.extra;
-  }
-
+const Card = ({
+  as: Component = motion.div,
+  withBorder = true,
+  withShadow = true,
+  hoverEffect = false,
+  className,
+  children,
+  initial = { opacity: 0, y: 20 },
+  animate = { opacity: 1, y: 0 },
+  transition = { duration: 0.3 },
+  ...props
+}: CardProps) => {
   return (
-    <CardBase className={cn('rounded', className)}>
-      {(cardTitle || titleExtra || extra) && (
-        <CardHeader className="flex flex-row items-center justify-between gap-4">
-          <div>
-            {cardTitle && <CardTitle>{cardTitle}</CardTitle>}
-            {subtitle && <CardDescription>{subtitle}</CardDescription>}
-          </div>
-          <div className="flex items-center">{titleExtra || extra}</div>
-        </CardHeader>
+    <Component
+      className={classNames(
+        'rounded-lg bg-card p-6',
+        withBorder && 'border border-border',
+        withShadow && 'shadow-sm',
+        hoverEffect && 'hover:shadow-md hover:border-border/80 transition-all duration-200',
+        className
       )}
-      <CardContent>{children}</CardContent>
-      {footer && <CardFooter>{footer}</CardFooter>}
-    </CardBase>
+      initial={initial}
+      animate={animate}
+      transition={transition}
+      {...props}
+    >
+      {children}
+    </Component>
   );
 };
 
-// Add necessary sub-components
-Card.Body = CardContent;
+interface CardHeaderProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+const CardHeader = ({ children, className }: CardHeaderProps) => (
+  <div className={classNames('mb-4', className)}>
+    {children}
+  </div>
+);
+
+CardHeader.displayName = 'CardHeader';
 Card.Header = CardHeader;
+
+interface CardTitleProps {
+  className?: string;
+  children: React.ReactNode;
+}
+
+const CardTitle = ({ children, className }: CardTitleProps) => (
+  <h3 className={classNames('text-lg font-semibold', className)}>{children}</h3>
+);
+
+CardTitle.displayName = 'CardTitle';
 Card.Title = CardTitle;
+
+interface CardDescriptionProps {
+  className?: string;
+  children: React.ReactNode;
+}
+
+const CardDescription = ({ children, className }: CardDescriptionProps) => (
+  <p className={classNames('text-sm text-muted-foreground', className)}>{children}</p>
+);
+
+CardDescription.displayName = 'CardDescription';
 Card.Description = CardDescription;
+
+interface CardBodyProps {
+  className?: string;
+  children: React.ReactNode;
+}
+
+const CardBody = ({ children, className }: CardBodyProps) => (
+  <div className={classNames('', className)}>{children}</div>
+);
+
+CardBody.displayName = 'CardBody';
+Card.Body = CardBody;
+
+interface CardContentProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const CardContent = ({ children, className }: CardContentProps) => (
+  <div className={className}>{children}</div>
+);
+
+CardContent.displayName = 'CardContent';
+Card.Content = CardContent;
+
+interface CardFooterProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const CardFooter = ({ children, className }: CardFooterProps) => (
+  <div className={classNames('mt-4 pt-4 border-t border-border', className)}>
+    {children}
+  </div>
+);
+
+CardFooter.displayName = 'CardFooter';
 Card.Footer = CardFooter;
+
+Card.displayName = 'Card';
 
 export default Card;

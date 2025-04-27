@@ -63,47 +63,47 @@ model User {
   invalid_login_attempts Int       @default(0)
   lockedAt               DateTime?
 
-  teamMembers TeamMember[]
-  accounts    Account[]
-  sessions    Session[]
-  invitations Invitation[]
+  organizationMembers OrganizationMember[]
+  accounts            Account[]
+  sessions            Session[]
+  invitations         Invitation[]
 }
 
-model Team {
-  id              String       @id @default(uuid())
+model Organization {
+  id              String               @id @default(uuid())
   name            String
-  slug            String       @unique
-  domain          String?      @unique
-  defaultRole     Role         @default(MEMBER)
+  slug            String               @unique
+  domain          String?              @unique
+  defaultRole     Role                 @default(MEMBER)
   billingId       String?
   billingProvider String?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @default(now())
-  members         TeamMember[]
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @default(now())
+  members         OrganizationMember[]
   invitations     Invitation[]
   apiKeys         ApiKey[]
 
   @@index([billingId])
 }
 
-model TeamMember {
-  id        String   @id @default(uuid())
-  teamId    String
-  userId    String
-  role      Role     @default(MEMBER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+model OrganizationMember {
+  id             String       @id @default(uuid())
+  organizationId String
+  userId         String
+  role           Role         @default(MEMBER)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now())
 
-  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([teamId, userId])
+  @@unique([organizationId, userId])
   @@index([userId])
 }
 
 model Invitation {
   id             String   @id @default(uuid())
-  teamId         String
+  organizationId String
   email          String?
   role           Role     @default(MEMBER)
   token          String   @unique
@@ -114,10 +114,10 @@ model Invitation {
   sentViaEmail   Boolean  @default(true)
   allowedDomains String[] @default([])
 
-  user User @relation(fields: [invitedBy], references: [id], onDelete: Cascade)
-  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [invitedBy], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  @@unique([teamId, email])
+  @@unique([organizationId, email])
   @@index([email])
 }
 
@@ -131,18 +131,17 @@ model PasswordReset {
 }
 
 model ApiKey {
-  id         String    @id @default(uuid())
-  name       String
-  teamId     String
-  hashedKey  String    @unique
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @default(now())
-  expiresAt  DateTime?
-  lastUsedAt DateTime?
+  id             String       @id @default(uuid())
+  name           String
+  key            String       @unique
+  organizationId String
+  expiresAt      DateTime?
+  lastUsed       DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
-
-  @@index([teamId])
+  @@index([organizationId])
 }
 
 model Subscription {
