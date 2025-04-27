@@ -3,7 +3,7 @@ import type { FormikConfig } from 'formik';
 import { useFormik } from 'formik';
 import { useTranslation } from 'next-i18next';
 import React from 'react';
-import { Button } from 'react-daisyui';
+import { Button } from '@/components/shared';
 import type { WebhookFormSchema } from 'types';
 import * as Yup from 'yup';
 import Modal from '../shared/Modal';

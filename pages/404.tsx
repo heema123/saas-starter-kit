@@ -5,6 +5,7 @@ import { GetServerSidePropsContext } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Link from 'next/link';
 import router from 'next/router';
+import { Button } from '@/components/shared';
 
 const Custom404 = () => {
   const { t } = useTranslation('common');
@@ -20,12 +21,18 @@ const Custom404 = () => {
         {t('sorry-not-found')}
       </p>
       <div className="mt-8 space-x-5">
-        <Link
-          href="/"
-          className="btn btn-primary btn-md py-3 px-2 sm:px-4 text-white"
-        >
-          {t('go-home')}
-        </Link>
+        <div className="my-2 flex items-center gap-3">
+          <Button asChild variant="default" size="lg">
+            <Link href="/">
+              {t('home')}
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="lg" className="dark:border-zinc-600 dark:text-zinc-200">
+            <Link href="https://github.com/boxyhq/saas-starter-kit/issues">
+              {t('report')}
+            </Link>
+          </Button>
+        </div>
         <button
           onClick={(e) => {
             e.preventDefault();

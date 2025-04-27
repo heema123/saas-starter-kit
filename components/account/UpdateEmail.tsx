@@ -1,7 +1,7 @@
 import { useFormik } from 'formik';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'next-i18next';
-import { Button, Input } from 'react-daisyui';
+import { Button, Input } from '@/components/shared';
 
 import type { ApiResponse } from 'types';
 import { Card } from '@/components/shared';
@@ -49,36 +49,32 @@ const UpdateEmail = ({ user, allowEmailChange }: UpdateEmailProps) => {
 
   return (
     <form onSubmit={formik.handleSubmit}>
-      <Card>
-        <Card.Body>
-          <Card.Header>
-            <Card.Title>{t('email-address')}</Card.Title>
-            <Card.Description>
-              {t('email-address-description')}
-            </Card.Description>
-          </Card.Header>
-          <Input
-            type="email"
-            name="email"
-            placeholder={t('your-email')}
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            className="w-full max-w-md"
-            required
-            disabled={!allowEmailChange}
-          />
-        </Card.Body>
-        <Card.Footer>
+      <Card 
+        title={{
+          title: t('email-address'),
+          subtitle: t('email-address-description')
+        }}
+        footer={
           <Button
             type="submit"
-            color="primary"
-            loading={formik.isSubmitting}
+            variant="default"
             disabled={!formik.dirty || !formik.isValid}
-            size="md"
+            className={formik.isSubmitting ? "opacity-70 pointer-events-none" : ""}
           >
-            {t('save-changes')}
+            {formik.isSubmitting ? t('saving') : t('save-changes')}
           </Button>
-        </Card.Footer>
+        }
+      >
+        <Input
+          type="email"
+          name="email"
+          placeholder={t('your-email')}
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          className="w-full max-w-md"
+          required
+          disabled={!allowEmailChange}
+        />
       </Card>
     </form>
   );

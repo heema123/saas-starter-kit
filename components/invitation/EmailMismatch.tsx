@@ -1,4 +1,4 @@
-import { Button } from 'react-daisyui';
+import { Button } from '@/components/shared';
 import { useTranslation } from 'next-i18next';
 import { useCustomSignOut } from 'hooks/useCustomSignout';
 

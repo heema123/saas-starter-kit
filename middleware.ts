@@ -71,18 +71,57 @@ const unAuthenticatedRoutes = [
   '/unlock-account',
   '/login/saml',
   '/.well-known/*',
+  '/',
 ];
 
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  const isLanguageChangeRequest = req.headers.get('x-language-change') === 'true' || req.cookies.get('languageChange')?.value === 'true';
+  
+  // Debug logging
+  console.log('Middleware - Request URL:', req.url);
+  console.log('Middleware - Pathname:', pathname);
+  console.log('Middleware - Locale:', req.nextUrl.locale);
+  console.log('Middleware - Default locale:', req.nextUrl.defaultLocale);
+  console.log('Middleware - Is language change request:', isLanguageChangeRequest);
+
+  // Check if this is a language change request via header or cookie
+  if (isLanguageChangeRequest) {
+    console.log('Middleware - Language change request detected, bypassing auth check');
+    
+    // Create a response that allows the request to proceed
+    const response = NextResponse.next();
+    
+    // Clear the language change cookie if it exists
+    if (req.cookies.get('languageChange')) {
+      response.cookies.delete('languageChange');
+    }
+    
+    return response;
+  }
+
+  // Path normalization for i18n - strip out the locale prefix for matching
+  let pathWithoutLocale = pathname;
+  const locales = ['en', 'ar']; // Should match your i18n config
+  
+  for (const locale of locales) {
+    if (pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`) {
+      // Remove locale prefix for route matching
+      pathWithoutLocale = pathname.replace(`/${locale}`, '') || '/';
+      console.log('Middleware - Normalized path without locale:', pathWithoutLocale);
+      break;
+    }
+  }
 
   // Bypass routes that don't require authentication
-  if (micromatch.isMatch(pathname, unAuthenticatedRoutes)) {
+  if (micromatch.isMatch(pathWithoutLocale, unAuthenticatedRoutes)) {
+    console.log('Middleware - Route is exempt from authentication:', pathWithoutLocale);
     return NextResponse.next();
   }
 
   const redirectUrl = new URL('/auth/login', req.url);
   redirectUrl.searchParams.set('callbackUrl', encodeURI(req.url));
+  console.log('Middleware - Redirect URL (if needed):', redirectUrl.toString());
 
   // JWT strategy
   if (env.nextAuth.sessionStrategy === 'jwt') {
@@ -91,8 +130,10 @@ export default async function middleware(req: NextRequest) {
     });
 
     if (!token) {
+      console.log('Middleware - No JWT token, redirecting to login');
       return NextResponse.redirect(redirectUrl);
     }
+    console.log('Middleware - JWT token found, allowing request');
   }
 
   // Database strategy
@@ -109,8 +150,10 @@ export default async function middleware(req: NextRequest) {
     const session = await response.json();
 
     if (!session.user) {
+      console.log('Middleware - No session user, redirecting to login');
       return NextResponse.redirect(redirectUrl);
     }
+    console.log('Middleware - Session user found, allowing request');
   }
 
   const requestHeaders = new Headers(req.headers);
@@ -131,6 +174,7 @@ export default async function middleware(req: NextRequest) {
   }
 
   // All good, let the request through
+  console.log('Middleware - Request passed all checks, proceeding');
   return response;
 }
 

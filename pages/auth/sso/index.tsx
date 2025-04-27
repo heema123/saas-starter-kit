@@ -1,5 +1,5 @@
 import { AuthLayout } from '@/components/layouts';
-import { InputWithLabel, Loading } from '@/components/shared';
+import { InputWithLabel, Loading, Button } from '@/components/shared';
 import env from '@/lib/env';
 import { useFormik } from 'formik';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
@@ -9,7 +9,6 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { type ReactElement, useState } from 'react';
-import { Button } from 'react-daisyui';
 import { toast } from 'react-hot-toast';
 import type { NextPageWithLayout } from 'types';
 import * as Yup from 'yup';
@@ -120,12 +119,16 @@ const SSO: NextPageWithLayout<
         </form>
         <div className="divider"></div>
         <div className="space-y-3">
-          <Link href="/auth/login" className="btn btn-outline w-full">
-            {t('sign-in-with-password')}
-          </Link>
-          <Link href="/auth/magic-link" className="btn btn-outline w-full">
-            {t('sign-in-with-email')}
-          </Link>
+          <Button asChild variant="outline" className="w-full">
+            <Link href="/auth/login">
+              {t('sign-in-with-password')}
+            </Link>
+          </Button>
+          <Button asChild variant="outline" className="w-full">
+            <Link href="/auth/magic-link">
+              {t('sign-in-with-email')}
+            </Link>
+          </Button>
         </div>
       </div>
     </>

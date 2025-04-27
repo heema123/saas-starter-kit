@@ -3,7 +3,7 @@ import { mutate } from 'swr';
 import { useFormik } from 'formik';
 import toast from 'react-hot-toast';
 import React, { useState } from 'react';
-import { Button, Input } from 'react-daisyui';
+import { Button, Input } from '@/components/shared';
 import { useTranslation } from 'next-i18next';
 
 import type { ApiResponse } from 'types';
@@ -13,6 +13,8 @@ import type { Team } from '@prisma/client';
 import { defaultHeaders, isValidDomain, maxLengthPolicies } from '@/lib/common';
 import { InputWithCopyButton } from '../shared';
 import ConfirmationDialog from '../shared/ConfirmationDialog';
+import { useTeam } from '@/hooks/useTeam';
+import { generateInvitationLink } from 'lib/invitation';
 
 interface InviteViaLinkProps {
   team: Team;
@@ -109,8 +111,10 @@ const InviteViaLink = ({ team }: InviteViaLinkProps) => {
             ? `Anyone with an email address ending with ${invitation.allowedDomains} can use this link to join your team.`
             : 'Anyone can use this link to join your team.'}
           <Button
-            className="btn btn-xs btn-link link-error"
+            variant="link"
+            size="sm"
             onClick={() => setShowDelDialog(true)}
+            className="text-destructive"
           >
             {t('delete-link')}
           </Button>

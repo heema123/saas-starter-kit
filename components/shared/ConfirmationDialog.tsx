@@ -1,6 +1,15 @@
 import { useTranslation } from 'next-i18next';
-import { Button } from 'react-daisyui';
-import Modal from './Modal';
+import { Button } from '@/lib/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/lib/components/ui/alert-dialog';
 
 interface ConfirmationDialogProps {
   title: string;
@@ -14,33 +23,34 @@ interface ConfirmationDialogProps {
 
 const ConfirmationDialog = ({
   title,
-  children,
   visible,
   onConfirm,
   onCancel,
   confirmText,
   cancelText,
+  children,
 }: ConfirmationDialogProps) => {
   const { t } = useTranslation('common');
 
-  const handleConfirm = async () => {
-    await onConfirm();
-    onCancel();
-  };
-
   return (
-    <Modal open={visible} close={onCancel}>
-      <Modal.Header>{title}</Modal.Header>
-      <Modal.Body className="text-sm leading-6">{children}</Modal.Body>
-      <Modal.Footer>
-        <Button type="button" variant="outline" onClick={onCancel} size="md">
-          {cancelText || t('cancel')}
-        </Button>
-        <Button type="button" color="error" onClick={handleConfirm} size="md">
-          {confirmText || t('delete')}
-        </Button>
-      </Modal.Footer>
-    </Modal>
+    <AlertDialog open={visible} onOpenChange={(open) => !open && onCancel()}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{children}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={onCancel}>
+            {cancelText || t('cancel')}
+          </AlertDialogCancel>
+          <AlertDialogAction asChild>
+            <Button variant="destructive" onClick={onConfirm}>
+              {confirmText || t('confirm')}
+            </Button>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
 

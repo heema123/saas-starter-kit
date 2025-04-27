@@ -1,47 +1,64 @@
-import React from 'react';
+import { 
+  Card as CardBase, 
+  CardContent, 
+  CardDescription, 
+  CardFooter, 
+  CardHeader, 
+  CardTitle 
+} from '@/lib/components/ui/card';
+import { cn } from '@/lib/lib/utils';
 
-const Card = ({ children }: { children: React.ReactNode }) => {
+interface CardTitleProps {
+  title: string;
+  subtitle?: string;
+  extra?: React.ReactNode;
+}
+
+interface CardProps {
+  title?: string | CardTitleProps;
+  children: React.ReactNode;
+  extra?: React.ReactNode;
+  footer?: React.ReactNode;
+  className?: string;
+}
+
+const Card = (props: CardProps) => {
+  const { title, children, extra, footer, className = '' } = props;
+
+  let cardTitle = '';
+  let subtitle = '';
+  let titleExtra;
+
+  if (typeof title === 'string') {
+    cardTitle = title;
+  } else if (title) {
+    cardTitle = title.title;
+    subtitle = title.subtitle || '';
+    titleExtra = title.extra;
+  }
+
   return (
-    <div className="card w-full border border-rounded dark:bg-black dark:border-gray-600">
-      {children}
-    </div>
+    <CardBase className={cn('rounded', className)}>
+      {(cardTitle || titleExtra || extra) && (
+        <CardHeader className="flex flex-row items-center justify-between gap-4">
+          <div>
+            {cardTitle && <CardTitle>{cardTitle}</CardTitle>}
+            {subtitle && <CardDescription>{subtitle}</CardDescription>}
+          </div>
+          <div className="flex items-center">{titleExtra || extra}</div>
+        </CardHeader>
+      )}
+      <CardContent>{children}</CardContent>
+      {footer && <CardFooter>{footer}</CardFooter>}
+    </CardBase>
   );
 };
 
-const Title = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <h2 className="card-title text-xl font-medium leading-none tracking-tight">
-      {children}
-    </h2>
-  );
-};
-
-const Description = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="text-gray-600 dark:text-gray-400 text-sm">{children}</div>
-  );
-};
-
-const Header = ({ children }: { children: React.ReactNode }) => {
-  return <div className="flex gap-2 flex-col">{children}</div>;
-};
-
-const Body = ({ children }: { children: React.ReactNode }) => {
-  return <div className="card-body dark:bg-black gap-4 p-6">{children}</div>;
-};
-
-const Footer = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="card-actions justify-end dark:border-gray-600 p-2 border-t bg-gray-50 dark:bg-black">
-      {children}
-    </div>
-  );
-};
-
-Card.Body = Body;
-Card.Title = Title;
-Card.Description = Description;
-Card.Header = Header;
-Card.Footer = Footer;
+// Add necessary sub-components
+Card.Body = CardContent;
+Card.Header = CardHeader;
+Card.Title = CardTitle;
+Card.Description = CardDescription;
+Card.Footer = CardFooter;
 
 export default Card;

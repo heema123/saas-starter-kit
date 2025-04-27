@@ -6,20 +6,20 @@ import type {
 import * as Yup from 'yup';
 import Link from 'next/link';
 import { useFormik } from 'formik';
-import { Button } from 'react-daisyui';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import React, { type ReactElement, useEffect, useState, useRef } from 'react';
-import type { ComponentStatus } from 'react-daisyui/dist/types';
 import { getCsrfToken, signIn, useSession } from 'next-auth/react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { motion } from 'framer-motion';
+import { AtSign, ShieldCheck } from 'lucide-react';
 
 import env from '@/lib/env';
 import type { NextPageWithLayout } from 'types';
 import { AuthLayout } from '@/components/layouts';
 import GithubButton from '@/components/auth/GithubButton';
 import GoogleButton from '@/components/auth/GoogleButton';
-import { Alert, InputWithLabel, Loading } from '@/components/shared';
+import { Alert, InputWithLabel, Loading, Button } from '@/components/shared';
 import { authProviderEnabled } from '@/lib/auth';
 import Head from 'next/head';
 import TogglePasswordVisibility from '@/components/shared/TogglePasswordVisibility';
@@ -30,7 +30,7 @@ import { maxLengthPolicies } from '@/lib/common';
 
 interface Message {
   text: string | null;
-  status: ComponentStatus | null;
+  status: 'default' | 'destructive' | null;
 }
 
 const Login: NextPageWithLayout<
@@ -56,7 +56,7 @@ const Login: NextPageWithLayout<
 
   useEffect(() => {
     if (error) {
-      setMessage({ text: error, status: 'error' });
+      setMessage({ text: error, status: 'destructive' });
     }
 
     if (success) {
@@ -95,7 +95,7 @@ const Login: NextPageWithLayout<
       recaptchaRef.current?.reset();
 
       if (response && !response.ok) {
-        setMessage({ text: response.error, status: 'error' });
+        setMessage({ text: response.error, status: 'destructive' });
         return;
       }
     },
@@ -112,7 +112,7 @@ const Login: NextPageWithLayout<
   const params = token ? `?token=${token}` : '';
 
   return (
-    <>
+    <div dir={t('direction')}>
       <Head>
         <title>{t('login-title')}</title>
       </Head>
@@ -121,18 +121,28 @@ const Login: NextPageWithLayout<
           {t(message.text)}
         </Alert>
       )}
-      <div className="rounded p-6 border">
-        <div className="flex gap-2 flex-wrap">
-          {authProviders.github && <GithubButton />}
-          {authProviders.google && <GoogleButton />}
+      <motion.div 
+        className="rounded-xl p-8 border bg-card shadow-md transition-all duration-300 hover:shadow-lg backdrop-blur-sm"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <div className="mb-6 w-full flex flex-col items-center">
+          <h3 className="text-center mb-3 text-sm font-medium text-muted-foreground">
+            {t('sign-in-with')}
+          </h3>
+          <div className="w-full max-w-xs">
+            {authProviders.google && <GoogleButton />}
+          </div>
         </div>
 
-        {(authProviders.github || authProviders.google) &&
-          authProviders.credentials && <div className="divider">{t('or')}</div>}
+        {authProviders.google && authProviders.credentials && (
+          <div className="divider my-6 opacity-70">{t('or')}</div>
+        )}
 
         {authProviders.credentials && (
           <form onSubmit={formik.handleSubmit}>
-            <div className="space-y-3">
+            <div className="space-y-4">
               <InputWithLabel
                 type="email"
                 label="Email"
@@ -142,24 +152,22 @@ const Login: NextPageWithLayout<
                 error={formik.touched.email ? formik.errors.email : undefined}
                 onChange={formik.handleChange}
               />
-              <div className="relative flex">
+              <div className="relative">
                 <InputWithLabel
                   type={isPasswordVisible ? 'text' : 'password'}
                   name="password"
                   placeholder={t('password')}
                   value={formik.values.password}
                   label={
-                    <label className="label">
+                    <div className="flex justify-between w-full">
                       <span className="label-text">{t('password')}</span>
-                      <span className="label-text-alt">
-                        <Link
-                          href="/auth/forgot-password"
-                          className="text-sm text-primary hover:text-[color-mix(in_oklab,oklch(var(--p)),black_7%)]"
-                        >
-                          {t('forgot-password')}
-                        </Link>
-                      </span>
-                    </label>
+                      <Link
+                        href="/auth/forgot-password"
+                        className="text-xs text-primary hover:text-primary/80 transition-colors font-medium"
+                      >
+                        {t('forgot-password')}
+                      </Link>
+                    </div>
                   }
                   error={
                     formik.touched.password ? formik.errors.password : undefined
@@ -177,59 +185,78 @@ const Login: NextPageWithLayout<
                 siteKey={recaptchaSiteKey}
               />
             </div>
-            <div className="mt-3 space-y-3">
+            <motion.div 
+              className="mt-6 space-y-4"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+            >
               <Button
                 type="submit"
-                color="primary"
-                loading={formik.isSubmitting}
-                active={formik.dirty}
-                fullWidth
-                size="md"
+                variant="default"
+                disabled={formik.isSubmitting || !formik.dirty}
+                size="lg"
+                className="py-5 font-medium w-full rounded-md"
               >
-                {t('sign-in')}
+                {formik.isSubmitting ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
+                    <span>{t('loading')}</span>
+                  </div>
+                ) : (
+                  t('sign-in')
+                )}
               </Button>
               <AgreeMessage text={t('sign-in')} />
-            </div>
+            </motion.div>
           </form>
         )}
 
         {(authProviders.email || authProviders.saml) && (
-          <div className="divider"></div>
+          <div className="divider my-6 opacity-70"></div>
         )}
 
-        <div className="space-y-3">
+        <div className="space-y-3 mt-4">
           {authProviders.email && (
-            <Link
-              href={`/auth/magic-link${params}`}
-              className="btn btn-outline w-full"
-            >
-              &nbsp;{t('sign-in-with-email')}
-            </Link>
+            <Button asChild variant="outline" className="w-full py-5 rounded-md">
+              <Link href={`/auth/magic-link${params}`} className="flex items-center justify-center gap-2">
+                <AtSign size={18} />
+                {t('sign-in-with-email')}
+              </Link>
+            </Button>
           )}
 
           {authProviders.saml && (
-            <Link href="/auth/sso" className="btn btn-outline w-full">
-              &nbsp;{t('continue-with-saml-sso')}
-            </Link>
+            <Button asChild variant="outline" className="w-full py-5 rounded-md">
+              <Link href="/auth/sso" className="flex items-center justify-center gap-2">
+                <ShieldCheck size={18} />
+                {t('continue-with-saml-sso')}
+              </Link>
+            </Button>
           )}
         </div>
-      </div>
-      <p className="text-center text-sm text-gray-600 mt-3">
+      </motion.div>
+      <motion.p 
+        className="text-center text-sm text-muted-foreground mt-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4, duration: 0.4 }}
+      >
         {t('dont-have-an-account')}
         <Link
           href={`/auth/join${params}`}
-          className="font-medium text-primary hover:text-[color-mix(in_oklab,oklch(var(--p)),black_7%)]"
+          className="font-medium text-primary hover:text-primary/80 transition-colors mx-1"
         >
-          &nbsp;{t('create-a-free-account')}
+          {t('create-a-free-account')}
         </Link>
-      </p>
-    </>
+      </motion.p>
+    </div>
   );
 };
 
 Login.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AuthLayout heading="welcome-back" description="log-in-to-account">
+    <AuthLayout heading="welcome-to-lawgic" description="log-in-to-account">
       {page}
     </AuthLayout>
   );

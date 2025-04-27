@@ -3,7 +3,7 @@ import * as Yup from 'yup';
 import { mutate } from 'swr';
 import { useFormik } from 'formik';
 import toast from 'react-hot-toast';
-import { Button, Input } from 'react-daisyui';
+import { Button, Input } from '@/components/shared';
 import { useTranslation } from 'next-i18next';
 
 import type { ApiResponse } from 'types';

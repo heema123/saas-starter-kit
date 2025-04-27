@@ -1,4 +1,4 @@
-import { Button } from 'react-daisyui';
+import { Button } from '@/components/shared';
 import type { GetServerSidePropsContext } from 'next';
 import { useState, type ReactElement, useEffect } from 'react';
 import type { ComponentStatus } from 'react-daisyui/dist/types';

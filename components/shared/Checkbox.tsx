@@ -1,35 +1,42 @@
 import React from 'react';
-import { Checkbox } from 'react-daisyui';
+import { Checkbox as CheckboxBase } from '@/lib/components/ui/checkbox';
+import { cn } from '@/lib/lib/utils';
 
-const CheckboxComponent = ({
-  onChange,
-  name,
-  value,
-  label,
-  defaultChecked,
-  className,
-}: {
+interface CheckboxProps {
   onChange: React.ChangeEventHandler<HTMLInputElement>;
   name: string;
   value: string;
   label: string;
   defaultChecked: boolean;
   className?: string;
-}) => {
+}
+
+const Checkbox = ({
+  onChange,
+  name,
+  value,
+  label,
+  defaultChecked,
+  className,
+}: CheckboxProps) => {
+  const id = `checkbox-${name}-${value}`;
+  
   return (
-    <div className={`flex items-center ${className || ''}`} key={value}>
-      <label className="flex items-center gap-2 text-sm">
-        <Checkbox
+    <div className={cn('flex items-center', className || '')} key={value}>
+      <div className="flex items-center gap-2 text-sm">
+        <CheckboxBase
+          id={id}
           name={name}
           value={value}
-          onChange={onChange}
+          onCheckedChange={onChange as any}
           defaultChecked={Boolean(defaultChecked)}
-          className="h-4 w-4 rounded [--chkfg:oklch(var(--p))] [--chkbg:white]"
         />
-        <span className="text-gray-700">{label}</span>
-      </label>
+        <label htmlFor={id} className="text-gray-700 cursor-pointer">
+          {label}
+        </label>
+      </div>
     </div>
   );
 };
 
-export default CheckboxComponent;
+export default Checkbox;

@@ -1,46 +1,46 @@
 [
   {
-    "name": "Create account",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+    "name": "Clients Management",
+    "description": "Efficiently organize and manage your law firm's client information, including contact details, case history, and document access with comprehensive profiles."
   },
   {
-    "name": "Sign in with Email and Password",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+    "name": "Cases Management",
+    "description": "Track and manage all your legal cases with detailed timelines, status updates, and task assignment for complete case oversight and organization."
   },
   {
-    "name": "Sign in with Magic link",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+    "name": "Leads Management",
+    "description": "Capture and nurture potential clients through a structured pipeline, tracking communications and conversion rates to grow your practice."
   },
   {
-    "name": "Sign in with SAML SSO",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+    "name": "Tasks Management",
+    "description": "Assign and track tasks across your team with deadlines, priorities, and status updates to ensure nothing falls through the cracks."
   },
   {
-    "name": "Directory Sync (SCIM)",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+    "name": "Legal Agenda",
+    "description": "Comprehensive calendar system for court dates, client meetings, deadlines, and internal events with reminders and team scheduling."
   },
   {
-    "name": "Update account",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+    "name": "Documents Storage",
+    "description": "Secure cloud storage for all case documents with version control, client access permissions, and easy search functionality."
   },
   {
-    "name": "Invite users to the team",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+    "name": "Document Templates",
+    "description": "Create, store, and use legal document templates with variable fields for quick and consistent document generation."
   },
   {
-    "name": "Manage team members",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+    "name": "Financial Management",
+    "description": "Track billable hours, generate invoices, manage payments, and monitor expenses with detailed financial reporting."
   },
   {
-    "name": "Update team settings",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+    "name": "Multi-Tenant Security",
+    "description": "Enterprise-grade security with complete data isolation between tenants, ensuring your firm's data remains private and protected."
   },
   {
-    "name": "Webhooks & Events",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+    "name": "Arabic (RTL) Support",
+    "description": "Full Arabic language support with right-to-left text direction throughout the application for regional compatibility."
   },
   {
-    "name": "Create team",
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+    "name": "Custom User Roles",
+    "description": "Define custom access levels for attorneys, paralegals, administrators, and other staff members to control system access."
   }
 ]

@@ -6,6 +6,7 @@ import { useTranslation } from 'next-i18next';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { type ReactElement, useEffect } from 'react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { motion } from 'framer-motion';
 
 import type { NextPageWithLayout } from 'types';
 import { authProviderEnabled } from '@/lib/auth';
@@ -50,14 +51,25 @@ const Signup: NextPageWithLayout<
       <Head>
         <title>{t('sign-up-title')}</title>
       </Head>
-      <div className="rounded p-6 border">
-        <div className="flex gap-2 flex-wrap">
-          {authProviders.github && <GithubButton />}
-          {authProviders.google && <GoogleButton />}
+      <motion.div 
+        className="rounded-xl p-8 border bg-card shadow-md transition-all duration-300 hover:shadow-lg backdrop-blur-sm"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        dir={t('direction')}
+      >
+        <div className="mb-6 w-full flex flex-col items-center">
+          <h3 className="text-center mb-3 text-sm font-medium text-muted-foreground">
+            {t('sign-up-with')}
+          </h3>
+          <div className="w-full max-w-xs">
+            {authProviders.google && <GoogleButton />}
+          </div>
         </div>
 
-        {(authProviders.github || authProviders.google) &&
-          authProviders.credentials && <div className="divider">{t('or')}</div>}
+        {authProviders.google && authProviders.credentials && (
+          <div className="divider my-6 opacity-70">{t('or')}</div>
+        )}
 
         {authProviders.credentials && (
           <>
@@ -71,16 +83,21 @@ const Signup: NextPageWithLayout<
             )}
           </>
         )}
-      </div>
-      <p className="text-center text-sm text-gray-600 mt-3">
+      </motion.div>
+      <motion.p 
+        className="text-center text-sm text-muted-foreground mt-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4, duration: 0.4 }}
+      >
         {t('already-have-an-account')}
         <Link
           href={`/auth/login/${params}`}
-          className="font-medium text-primary hover:text-[color-mix(in_oklab,oklch(var(--p)),black_7%)]"
+          className="font-medium text-primary hover:text-primary/80 transition-colors mx-1"
         >
-          &nbsp;{t('sign-in')}
+          {t('sign-in')}
         </Link>
-      </p>
+      </motion.p>
     </>
   );
 };

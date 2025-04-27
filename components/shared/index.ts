@@ -9,3 +9,7 @@ export { default as WithLoadingAndError } from './WithLoadingAndError';
 export { default as InputWithCopyButton } from './InputWithCopyButton';
 export { default as CopyToClipboardButton } from './CopyToClipboardButton';
 export { default as Checkbox } from './Checkbox';
+export { Button } from '@/lib/components/ui/button';
+export { Input } from '@/lib/components/ui/input';
+export { default as LanguageSwitcher } from './LanguageSwitcher';
+export { default as AuthDebug } from './AuthDebug';

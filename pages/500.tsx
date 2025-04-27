@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { GetServerSidePropsContext } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import router from 'next/router';
+import Link from 'next/link';
+import { Button } from '@/components/shared';
 
 const Custom500 = () => {
   const { t } = useTranslation('common');
@@ -31,6 +33,13 @@ const Custom500 = () => {
         <p className="text-lg md:text-xl lg:text-2xl dark:text-gray-500 my-12">
           {t('try-again-later')}
         </p>
+      </div>
+      <div className="my-2 flex items-center gap-3">
+        <Button asChild variant="outline" size="lg" className="dark:border-zinc-600 dark:text-zinc-200">
+          <Link href="https://github.com/boxyhq/saas-starter-kit/issues">
+            {t('report')}
+          </Link>
+        </Button>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import { useFormik } from 'formik';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'next-i18next';
-import { Button, Input } from 'react-daisyui';
+import { Button, Input } from '@/components/shared';
 
 import type { ApiResponse } from 'types';
 import { Card } from '@/components/shared';
@@ -53,33 +53,31 @@ const UpdateName = ({ user }: { user: Partial<User> }) => {
 
   return (
     <form onSubmit={formik.handleSubmit}>
-      <Card>
-        <Card.Body>
-          <Card.Header>
-            <Card.Title>{t('name')}</Card.Title>
-            <Card.Description>{t('name-appearance')}</Card.Description>
-          </Card.Header>
-          <Input
-            type="text"
-            name="name"
-            placeholder={t('your-name')}
-            value={formik.values.name}
-            onChange={formik.handleChange}
-            className="w-full max-w-md"
-            required
-          />
-        </Card.Body>
-        <Card.Footer>
+      <Card 
+        title={{
+          title: t('name'),
+          subtitle: t('name-appearance')
+        }}
+        footer={
           <Button
             type="submit"
-            color="primary"
-            loading={formik.isSubmitting}
+            variant="default"
             disabled={!formik.dirty || !formik.isValid}
-            size="md"
+            className={formik.isSubmitting ? "opacity-70 pointer-events-none" : ""}
           >
-            {t('save-changes')}
+            {formik.isSubmitting ? t('saving') : t('save-changes')}
           </Button>
-        </Card.Footer>
+        }
+      >
+        <Input
+          type="text"
+          name="name"
+          placeholder={t('your-name')}
+          value={formik.values.name}
+          onChange={formik.handleChange}
+          className="w-full max-w-md"
+          required
+        />
       </Card>
     </form>
   );

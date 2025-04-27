@@ -4,7 +4,7 @@ import { defaultHeaders, passwordPolicies } from '@/lib/common';
 import { useFormik } from 'formik';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import { Button } from 'react-daisyui';
+import { Button } from '@/components/shared';
 import toast from 'react-hot-toast';
 import type { ApiResponse } from 'types';
 import * as Yup from 'yup';
@@ -13,6 +13,7 @@ import AgreeMessage from './AgreeMessage';
 import GoogleReCAPTCHA from '../shared/GoogleReCAPTCHA';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { maxLengthPolicies } from '@/lib/common';
+import { motion } from 'framer-motion';
 
 interface JoinProps {
   recaptchaSiteKey: string | null;
@@ -82,8 +83,8 @@ const Join = ({ recaptchaSiteKey }: JoinProps) => {
   });
 
   return (
-    <form onSubmit={formik.handleSubmit}>
-      <div className="space-y-1">
+    <form onSubmit={formik.handleSubmit} dir={t('direction')}>
+      <div className="space-y-4">
         <InputWithLabel
           type="text"
           label={t('name')}
@@ -111,7 +112,7 @@ const Join = ({ recaptchaSiteKey }: JoinProps) => {
           error={formik.errors.email}
           onChange={formik.handleChange}
         />
-        <div className="relative flex">
+        <div className="relative">
           <InputWithLabel
             type={isPasswordVisible ? 'text' : 'password'}
             label={t('password')}
@@ -132,19 +133,30 @@ const Join = ({ recaptchaSiteKey }: JoinProps) => {
           siteKey={recaptchaSiteKey}
         />
       </div>
-      <div className="mt-3 space-y-3">
+      <motion.div 
+        className="mt-6 space-y-4"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.4 }}
+      >
         <Button
           type="submit"
-          color="primary"
-          loading={formik.isSubmitting}
-          active={formik.dirty}
-          fullWidth
-          size="md"
+          variant="default"
+          disabled={formik.isSubmitting || !formik.dirty}
+          size="lg"
+          className="py-5 font-medium w-full rounded-md"
         >
-          {t('create-account')}
+          {formik.isSubmitting ? (
+            <div className="flex items-center justify-center gap-2">
+              <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
+              <span>{t('loading')}</span>
+            </div>
+          ) : (
+            t('create-account')
+          )}
         </Button>
         <AgreeMessage text={t('create-account')} />
-      </div>
+      </motion.div>
     </form>
   );
 };
